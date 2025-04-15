@@ -1,0 +1,16 @@
+# Обробка даних
+pandas
+numpy
+scikit-learn
+
+# Візуалізація
+matplotlib
+seaborn
+
+# Моделі
+xgboost
+tensorflow
+keras
+
+# Інше
+tqdm
