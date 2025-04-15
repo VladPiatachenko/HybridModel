@@ -27,7 +27,7 @@ def extract_features(X_train_seq, X_test_seq):
     autoencoder = Model(inputs=inp, outputs=x)
     autoencoder.compile(optimizer=Adam(), loss='mse')
 
-    autoencoder.fit(X_train_seq, X_train_seq, epochs=20, batch_size=32, verbose=0)
+    autoencoder.fit(X_train_seq, X_train_seq, epochs=10, batch_size=32, verbose=0)
 
     encoder = Model(inputs=inp, outputs=bottleneck)
 

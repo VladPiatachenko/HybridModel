@@ -14,19 +14,7 @@ import classifiers.knn_classifier as knn_clf
 import classifiers.svm_classifier as svm_clf
 import classifiers.logreg_classifier as logreg_clf
 
-# === ЗАВАНТАЖЕННЯ ТА РОЗБИТТЯ ===
-df = pd.read_csv("dataset/AllFeatureData.csv")
-X = df.iloc[:, :-1].values
-y = df.iloc[:, -1].values
 
-X_train_raw, X_test_raw, y_train_raw, y_test_raw = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# === МАСШТАБУВАННЯ ===
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train_raw)
-X_test_scaled = scaler.transform(X_test_raw)
-
-# === ФОРМУВАННЯ СЕКВЕНЦІЙ ===
 def make_sequences(X, y, window_size=10, stride=2):
     X_seq, y_seq = [], []
     for i in range(0, len(X) - window_size, stride):
@@ -34,6 +22,22 @@ def make_sequences(X, y, window_size=10, stride=2):
         y_seq.append(y[i+window_size-1])
     return np.array(X_seq), np.array(y_seq)
 
+# === РОЗБИТТЯ ДАНИХ ===
+df = pd.read_csv("dataset/AllFeatureData.csv")
+X = df.iloc[:, :-1].values
+y = df.iloc[:, -1].values
+
+# Розбиваємо ДО масштабування і формування секвенцій
+X_train_raw, X_test_raw, y_train_raw, y_test_raw = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Масштабуємо тільки train
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train_raw)
+X_test_scaled = scaler.transform(X_test_raw)
+
+# Формуємо послідовності (з перекриттям stride=2)
 X_train_seq, y_train = make_sequences(X_train_scaled, y_train_raw, window_size=10, stride=2)
 X_test_seq, y_test = make_sequences(X_test_scaled, y_test_raw, window_size=10, stride=2)
 

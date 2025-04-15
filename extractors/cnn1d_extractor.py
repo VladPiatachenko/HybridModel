@@ -15,7 +15,7 @@ def extract_features(X_train_seq, X_test_seq):
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2)(x)
-    x = Dropout(0.1)(x)
+    x = Dropout(0.3)(x)
 
     x = Conv1D(128, kernel_size=3, padding='same')(x)
     x = BatchNormalization()(x)
