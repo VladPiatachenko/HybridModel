@@ -1,9 +1,9 @@
 import numpy as np
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, LSTM, RepeatVector
+from tensorflow.keras.layers import Input, LSTM, RepeatVector, Dense, BatchNormalization, Dropout
 from tensorflow.keras.optimizers import Adam
 
-# Autoencoder екстрактор ознак (LSTM-based)
+# Покращений Autoencoder екстрактор ознак (LSTM-based)
 def extract_features(X_train_seq, X_test_seq):
     X_train_seq = np.array(X_train_seq)
     X_test_seq = np.array(X_test_seq)
@@ -15,21 +15,21 @@ def extract_features(X_train_seq, X_test_seq):
     inp = Input(shape=(timesteps, n_features))
 
     # Енкодер
-    encoded = LSTM(64)(inp)
+    x = LSTM(128, return_sequences=False)(inp)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
+    bottleneck = Dense(64, activation='relu')(x)
 
-    # Декодер (для навчання)
-    decoded = RepeatVector(timesteps)(encoded)
-    decoded = LSTM(n_features, return_sequences=True)(decoded)
+    # Декодер
+    x = RepeatVector(timesteps)(bottleneck)
+    x = LSTM(n_features, return_sequences=True)(x)
 
-    # Autoencoder модель
-    autoencoder = Model(inputs=inp, outputs=decoded)
+    autoencoder = Model(inputs=inp, outputs=x)
     autoencoder.compile(optimizer=Adam(), loss='mse')
 
-    # Навчаємо autoencoder (unsupervised)
     autoencoder.fit(X_train_seq, X_train_seq, epochs=10, batch_size=32, verbose=0)
 
-    # Екстрактор ознак (тільки encoder)
-    encoder = Model(inputs=inp, outputs=encoded)
+    encoder = Model(inputs=inp, outputs=bottleneck)
 
     X_train_vec = encoder.predict(X_train_seq)
     X_test_vec = encoder.predict(X_test_seq)
