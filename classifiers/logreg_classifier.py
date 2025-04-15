@@ -5,7 +5,7 @@ import seaborn as sns
 
 # Logistic Regression класифікатор
 def classify_and_score(X_train, y_train, X_test, y_test):
-    model = LogisticRegression(max_iter=1000)
+    model = LogisticRegression(max_iter=1000, class_weight='balanced')
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
@@ -16,7 +16,9 @@ def classify_and_score(X_train, y_train, X_test, y_test):
     # Матриця впевненості
     cm = confusion_matrix(y_test, y_pred)
     plt.figure(figsize=(5, 4))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['No Attack', 'Attack'], yticklabels=['No Attack', 'Attack'])
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=['No Attack', 'Attack'],
+                yticklabels=['No Attack', 'Attack'])
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.title('Confusion Matrix')

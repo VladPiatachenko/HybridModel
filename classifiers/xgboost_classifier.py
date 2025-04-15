@@ -6,7 +6,7 @@ import seaborn as sns
 # XGBoost класифікатор
 
 def classify_and_score(X_train, y_train, X_test, y_test):
-    model = XGBClassifier(use_label_encoder=False, eval_metric='logloss', verbosity=0)
+    model = XGBClassifier(scale_pos_weight=5, use_label_encoder=False, eval_metric='logloss', verbosity=0)
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
@@ -22,7 +22,7 @@ def classify_and_score(X_train, y_train, X_test, y_test):
     plt.ylabel('True')
     plt.title('Confusion Matrix')
     plt.tight_layout()
-    plt.savefig("results/confusion_matrix_lstm_xgb.png")
+    plt.savefig("results/confusion_matrix_xgb.png")
     plt.close()
 
     metrics = {
